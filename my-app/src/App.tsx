@@ -1,61 +1,81 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import './App.css';
 import robotImage from '../images/img.png';
 
-function App() {
-  const [movies, setMovies] = useState([])
-  const [books, setBooks] = useState([])
-  const [characters, setCharacters] = useState([])
+interface Movie {
+  _id: string;
+  name: string;
+  runtimeInMinutes: number;
+  budgetInMillions: number;
+  boxOfficeRevenueInMillions: number;
+  academyAwardWins: number;
+  academyAwardNominations: number;
+}
 
-  const [inputValue, setInputValue] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
+interface Book {
+  _id: string;
+  name: string;
+}
+
+interface Character {
+  _id: string;
+  name: string;
+  race: string;
+}
+
+function App() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const headers = { Authorization: `Bearer ${import.meta.env.VITE_LOTR_API_TOKEN}` }
+      const headers = { Authorization: `Bearer ${import.meta.env.VITE_LOTR_API_TOKEN}` };
 
       try {
-        const movieRes = await fetch('https://the-one-api.dev/v2/movie', { headers })
-        const movieData = await movieRes.json()
-        setMovies(movieData.docs)
+        const movieRes = await fetch('https://the-one-api.dev/v2/movie', { headers });
+        const movieData = await movieRes.json();
+        setMovies(movieData.docs);
 
-        const bookRes = await fetch('https://the-one-api.dev/v2/book', { headers })
-        const bookData = await bookRes.json()
-        setBooks(bookData.docs)
+        const bookRes = await fetch('https://the-one-api.dev/v2/book', { headers });
+        const bookData = await bookRes.json();
+        setBooks(bookData.docs);
 
-        const charRes = await fetch('https://the-one-api.dev/v2/character', { headers })
-        const charData = await charRes.json()
-        setCharacters(charData.docs)
+        const charRes = await fetch('https://the-one-api.dev/v2/character', { headers });
+        const charData = await charRes.json();
+        setCharacters(charData.docs);
       } catch (error) {
-        console.error('Error fetching data:', error)
+        console.error('Error fetching data:', error);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  const filteredBooks = books.filter(book =>
+  const filteredBooks = books.filter((book) =>
     book.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
-  const filteredMovies = movies.filter(movie =>
+  const filteredMovies = movies.filter((movie) =>
     movie.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
-  const filteredCharacters = characters.filter(character =>
+  const filteredCharacters = characters.filter((character) =>
     character.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value)
-  }
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
   const handleSearch = () => {
-    setSearchQuery(inputValue)
-  }
+    setSearchQuery(inputValue);
+  };
 
   const hasAnyResults =
-    filteredBooks.length > 0 || filteredMovies.length > 0 || filteredCharacters.length > 0
+    filteredBooks.length > 0 || filteredMovies.length > 0 || filteredCharacters.length > 0;
 
   return (
     <div className="app-container">
@@ -68,12 +88,12 @@ function App() {
           <li>About</li>
         </ul>
         <div className="navbar-icons">
-        <img src="../images/mdi_github.png" alt="GitHub" className="icon" />
-        <img src="../images/mdi_discord.png" alt="Discord" className="icon" />
-         <img src="../images/mdi_reddit.png" alt="Reddit" className="icon" />
+          <img src="../images/mdi_github.png" alt="GitHub" className="icon" />
+          <img src="../images/mdi_discord.png" alt="Discord" className="icon" />
+          <img src="../images/mdi_reddit.png" alt="Reddit" className="icon" />
         </div>
       </nav>
-      
+
       <div className="main-content">
         <div className="text-container">
           <h1>Ask me a question about {`{ ONE API TO RULE THEM ALL!! }`}</h1>
@@ -85,16 +105,14 @@ function App() {
               value={inputValue}
               onChange={handleInputChange}
             />
-            <button className="search-button" onClick={handleSearch}>Search</button>
+            <button className="search-button" onClick={handleSearch}>
+              Search
+            </button>
           </div>
         </div>
 
         <div className="robot-container">
-          <img 
-            src={robotImage} 
-            alt="Robot"
-            className="robot-img"
-          />
+          <img src={robotImage} alt="Robot" className="robot-img" />
         </div>
       </div>
 
@@ -122,7 +140,9 @@ function App() {
                       <p>Runtime: {movie.runtimeInMinutes} min</p>
                       <p>Budget: {movie.budgetInMillions} million</p>
                       <p>Box Office: ${movie.boxOfficeRevenueInMillions} million</p>
-                      <p>Awards: {movie.academyAwardWins} wins, {movie.academyAwardNominations} nominations</p>
+                      <p>
+                        Awards: {movie.academyAwardWins} wins, {movie.academyAwardNominations} nominations
+                      </p>
                     </div>
                   ))}
                 </>
@@ -146,7 +166,7 @@ function App() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export default App;
